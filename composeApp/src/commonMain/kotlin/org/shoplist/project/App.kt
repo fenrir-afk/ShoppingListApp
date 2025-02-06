@@ -14,8 +14,6 @@ import org.shoplist.project.shopList.presentation.ShoppingViewModel
 @Preview
 fun App() {
     MaterialTheme {
-        val viewModel = koinViewModel<ShoppingViewModel>()
-        viewModel.getList(1923)
         ShoppingListNavigation(
             modifier = Modifier.fillMaxSize()
         )

@@ -30,15 +30,23 @@ import org.shoplist.project.shopList.presentation.component.EnterKeyDialog
 @Composable
 fun RegistryScreen(
     modifier: Modifier = Modifier,
-    navigation: () -> Unit
+    onCreateKey: () -> Unit,
+    onCheckKey: () -> Unit
 ) {
     val showDialog =  remember { mutableStateOf(false) }
     if(showDialog.value)
-        EnterKeyDialog(value = "", setShowDialog = {
+        EnterKeyDialog(
+            value = "",
+            setShowDialog = {
             showDialog.value = it
-        }) {
+        },
+            setValue = {
 
-        }
+            },
+            onButtonClick = {
+                onCheckKey()
+            }
+        )
     Column(
         modifier = modifier.background(brown).fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -50,7 +58,7 @@ fun RegistryScreen(
             border = BorderStroke(2.dp, Color.Black),
             shape = CircleShape,
             onClick = {
-                navigation()
+                onCreateKey()
             }
         ) {
             Icon(Icons.Default.Add,"", tint = white)

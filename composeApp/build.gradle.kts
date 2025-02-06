@@ -69,14 +69,12 @@ kotlin {
             implementation(libs.bundles.ktor)
             implementation(libs.bundles.coil)
 
-            implementation(libs.androidx.activity)
-
-            implementation(libs.androidx.material3)
 
 
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
+
         }
 
         dependencies {

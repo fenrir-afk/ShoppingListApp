@@ -43,7 +43,11 @@ import org.shoplist.project.core.presentation.green
 import org.shoplist.project.core.presentation.turquoise
 
 @Composable
-fun EnterKeyDialog(value: String, setShowDialog: (Boolean) -> Unit, setValue: (String) -> Unit) {
+fun EnterKeyDialog(value: String,
+                   setShowDialog: (Boolean) -> Unit,
+                   setValue: (String) -> Unit,
+                   onButtonClick: () -> Unit
+) {
 
     val txtFieldError = remember { mutableStateOf("") }
     val txtField = remember { mutableStateOf(value) }

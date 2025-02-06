@@ -7,5 +7,6 @@ data class ShoppingScreenState(
     val items: List<Item> = emptyList(),
     val isLoading: Boolean = true,
     val selectedPage: Int = 0,
-    val errorMessage:UiText? = null
+    val errorMessage:UiText? = null,
+    val key:String? = null
 )
