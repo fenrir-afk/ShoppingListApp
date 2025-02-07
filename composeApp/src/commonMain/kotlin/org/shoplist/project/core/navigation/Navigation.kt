@@ -38,6 +38,9 @@ fun ShoppingListNavigation(
     val viewModel = koinViewModel<ShoppingViewModel>()
     val toaster = rememberToasterState()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    if(state.key != null){
+        navController.navigate(Route.MainPage)
+    }
     Toaster(state = toaster)
     ObserveAsEvents(events = viewModel.event) {event ->
         when(event){
@@ -60,14 +63,11 @@ fun ShoppingListNavigation(
                 ) {
                     RegistryScreen(
                         modifier = modifier,
-                        navController = navController, // Другого выхода я увы пока не нашёл
-                        state = state,
                         onCreateKey = {
                             viewModel.onAction(ShoppingActions.OnCreateKeyAction)
                         },
                         onCheckKey = { key:String ->
                             viewModel.onAction(ShoppingActions.OnCheckKeyAction(key))
-
                         }
                     )
                 }

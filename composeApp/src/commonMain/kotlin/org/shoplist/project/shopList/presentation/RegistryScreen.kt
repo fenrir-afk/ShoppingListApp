@@ -32,15 +32,10 @@ import org.shoplist.project.shopList.presentation.component.EnterKeyDialog
 @Composable
 fun RegistryScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
-    state:ShoppingScreenState,
     onCreateKey: () -> Unit,
     onCheckKey: (String) -> Unit
 ) {
     val showDialog =  remember { mutableStateOf(false) }
-    if(state.key != null){
-        navController.navigate(Route.MainPage)
-    }
     if(showDialog.value)
         EnterKeyDialog(
             value = "",
