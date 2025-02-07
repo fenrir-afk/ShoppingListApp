@@ -1,28 +1,19 @@
 package org.shoplist.project.core.navigation
 
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.dokar.sonner.Toaster
 import com.dokar.sonner.rememberToasterState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.shoplist.project.core.presentation.ObserveAsEvents
-import org.shoplist.project.core.presentation.toUiText
 import org.shoplist.project.shopList.presentation.OneTimeEvent
 import org.shoplist.project.shopList.presentation.RegistryScreen
 import org.shoplist.project.shopList.presentation.ShoppingActions
@@ -40,6 +31,8 @@ fun ShoppingListNavigation(
     val state by viewModel.state.collectAsStateWithLifecycle()
     if(state.key != null){
         navController.navigate(Route.MainPage)
+        viewModel.getAllLists(state.key!!)
+        viewModel.getListsContent()
     }
     Toaster(state = toaster)
     ObserveAsEvents(events = viewModel.event) {event ->
@@ -57,10 +50,7 @@ fun ShoppingListNavigation(
             navigation<Route.FurnitureGraph>(
                 startDestination = Route.Registry
             ) {
-                composable<Route.Registry>(
-                    exitTransition = { slideOutHorizontally() },
-                    popEnterTransition = { slideInHorizontally() }
-                ) {
+                composable<Route.Registry> {
                     RegistryScreen(
                         modifier = modifier,
                         onCreateKey = {
@@ -71,19 +61,10 @@ fun ShoppingListNavigation(
                         }
                     )
                 }
-                composable<Route.MainPage>(
-                    enterTransition = {
-                        slideInHorizontally { initialOffset ->
-                            initialOffset
-                        }
-                    },
-                    exitTransition = {
-                        slideOutHorizontally { initialOffset ->
-                            initialOffset
-                        }
-                    }
-                ) {
-                    SliderScreen()
+                composable<Route.MainPage>{
+                    SliderScreen(
+                        screenstate = state
+                    )
                 }
             }
         }

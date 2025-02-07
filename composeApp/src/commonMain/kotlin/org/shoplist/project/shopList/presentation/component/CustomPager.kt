@@ -2,39 +2,50 @@ package org.shoplist.project.shopList.presentation.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import org.shoplist.project.core.presentation.brown
+import org.shoplist.project.shopList.presentation.ShoppingScreenState
+
 
 
 data class A(var name1:String)
 @Composable
-fun CustomPager(modifier: Modifier = Modifier) {
-    var mutableList = mutableListOf<A>(A("sdsd"),A("13231"))
-    val state = rememberPagerState { mutableList.size }
-    HorizontalPager(
-        state = state,
-        modifier = modifier.fillMaxSize().background(brown)
-    ) { page ->
+fun CustomPager(
+    modifier: Modifier = Modifier,
+    screenstate: ShoppingScreenState
+) {
+    if(screenstate.isLoading){
         Box(
-            modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth()
-                .aspectRatio(1f),
+            modifier = modifier.fillMaxSize().background(brown),
             contentAlignment = Alignment.Center
-        ) {
-            Text(text = mutableList[page].name1, fontSize = 32.sp)
+        ){
+            CircularProgressIndicator()
+        }
+    }else{
+        val state = rememberPagerState {screenstate.itemLists.size + 1}
+        HorizontalPager(
+            state = state,
+            modifier = modifier.fillMaxSize().background(brown)
+        ) { page ->
+            if(page == screenstate.itemLists.size ){
+                Text("Hello",color = Color.White)
+            }else{
+                LazyColumn {
+                    items(screenstate.listsContent[page]){item ->
+                        LazyCollItem("id: ${item.id} name: ${item.name} created: ${item.created}")
+                    }
+                }
+            }
         }
     }
 }

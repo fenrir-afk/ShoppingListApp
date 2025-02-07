@@ -5,6 +5,9 @@ import androidx.compose.ui.Modifier
 import org.shoplist.project.shopList.presentation.component.CustomPager
 
 @Composable
-fun SliderScreen(modifier: Modifier = Modifier) {
-    CustomPager(modifier = modifier)
+fun SliderScreen(
+    modifier: Modifier = Modifier,
+    screenstate: ShoppingScreenState
+) {
+    CustomPager(modifier = modifier,screenstate)
 }

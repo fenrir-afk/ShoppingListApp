@@ -1,6 +1,5 @@
 package org.shoplist.project.shopList.presentation
 
-import androidx.compose.runtime.key
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -38,15 +37,9 @@ class ShoppingViewModel(
     }
 
     private fun createKey() = viewModelScope.launch{
-        _state.update {
-            it.copy(
-                isLoading = true
-            )
-        }
         repository.createKey().onSuccess { key ->
             _state.update {
                 it.copy(
-                    isLoading = false,
                     errorMessage = null,
                     key = key
                 )
@@ -54,8 +47,6 @@ class ShoppingViewModel(
         }.onError { error ->
             _state.update {
                 it.copy(
-                    items = emptyList(),
-                    isLoading = false,
                     errorMessage = error.toUiText()
                 )
             }
@@ -66,7 +57,6 @@ class ShoppingViewModel(
        repository.checkKey(key).onSuccess {
            _state.update {
                it.copy(
-                   isLoading = false,
                    errorMessage = null,
                    key = key
                )
@@ -74,8 +64,7 @@ class ShoppingViewModel(
        }.onError { error ->
            _state.update {
                it.copy(
-                   items = emptyList(),
-                   isLoading = false,
+                   itemLists = emptyList(),
                    errorMessage = error.toUiText()
                )
            }
@@ -83,38 +72,51 @@ class ShoppingViewModel(
        }
     }
 
+
+
     fun getAllLists(key:String) = viewModelScope.launch {
-        var list = repository.getAllLists(key)
-        println(list)
-    }
-
-    fun getList(id: Int) = viewModelScope.launch {
-        _state.update {
-            it.copy(
-                isLoading = true
-            )
+        repository.getAllLists(key).onSuccess { lists ->
+            _state.update {
+                it.copy(
+                    itemLists = lists,
+                    errorMessage = null,
+                    key = key
+                )
+            }
+        }.onError { error ->
+            _state.update {
+                it.copy(
+                    itemLists = emptyList(),
+                    errorMessage = error.toUiText()
+                )
+            }
+            _events.send(OneTimeEvent.Error(DataError.Remote.WRONG_KEY))
         }
-        repository
-            .getShoppingList(id)
-            .onSuccess { resultList ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = null,
-                        items = resultList
-                    )
-                }
-            }
-            .onError { error ->
-                _state.update {
-                    it.copy(
-                        items = emptyList(),
-                        isLoading = false,
-                        errorMessage = error.toUiText()
-                    )
-                }
-                _events.send(OneTimeEvent.Error(error))
-            }
     }
 
+    fun getListsContent() = viewModelScope.launch {
+        if(state.value.itemLists.isNotEmpty()){
+            state.value.itemLists.forEachIndexed { index, listsItem ->
+                repository
+                    .getShoppingList(listsItem.id)
+                    .onSuccess { resultList ->
+                        _state.value.listsContent.add(resultList.toMutableList())
+                    }
+                    .onError { error ->
+                        _events.send(OneTimeEvent.Error(error))
+                    }
+            }
+            _state.update {
+                it.copy(
+                    isLoading = false
+                )
+            }
+        }else{
+            _state.update {
+                it.copy(
+                    isLoading = false
+                )
+            }
+        }
+    }
 }
