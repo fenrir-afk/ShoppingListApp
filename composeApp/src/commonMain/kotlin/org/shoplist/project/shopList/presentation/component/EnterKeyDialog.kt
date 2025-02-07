@@ -3,7 +3,6 @@ package org.shoplist.project.shopList.presentation.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +22,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -38,15 +36,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import io.ktor.websocket.Frame
 import org.shoplist.project.core.presentation.brown
-import org.shoplist.project.core.presentation.gray
 import org.shoplist.project.core.presentation.green
 import org.shoplist.project.core.presentation.turquoise
 
 @Composable
-fun EnterKeyDialog(value: String,
-                   setShowDialog: (Boolean) -> Unit,
-                   setValue: (String) -> Unit,
-                   onButtonClick: () -> Unit
+fun EnterKeyDialog(
+    value: String,
+    setShowDialog: (Boolean) -> Unit,
+    setValue: (String) -> Unit,
+    onButtonClick: (String) -> Unit
 ) {
 
     val txtFieldError = remember { mutableStateOf("") }
@@ -103,7 +101,6 @@ fun EnterKeyDialog(value: String,
                         },
                         placeholder = { Frame.Text(text = "Enter value") },
                         value = txtField.value,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         onValueChange = {
                             txtField.value = it.take(10)
                         })
@@ -123,6 +120,7 @@ fun EnterKeyDialog(value: String,
                                     return@Button
                                 }
                                 setValue(txtField.value)
+                                onButtonClick(txtField.value)
                                 setShowDialog(false)
                             },
                         ) {

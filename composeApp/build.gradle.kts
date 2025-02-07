@@ -45,6 +45,8 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
 
             implementation(libs.androidx.activity)
+
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -69,11 +71,11 @@ kotlin {
             implementation(libs.bundles.ktor)
             implementation(libs.bundles.coil)
 
-
-
+            implementation(libs.sonner)
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
+
 
         }
 

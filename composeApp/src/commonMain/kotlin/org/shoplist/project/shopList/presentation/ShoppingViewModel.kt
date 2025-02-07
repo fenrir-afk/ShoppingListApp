@@ -1,11 +1,15 @@
 package org.shoplist.project.shopList.presentation
 
+import androidx.compose.runtime.key
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.shoplist.project.core.domain.DataError
 import org.shoplist.project.core.domain.onError
 import org.shoplist.project.core.domain.onSuccess
 import org.shoplist.project.core.presentation.toUiText
@@ -18,10 +22,22 @@ class ShoppingViewModel(
     private val _state = MutableStateFlow(ShoppingScreenState())
     val state = _state.asStateFlow()
 
+    private val _events = Channel<OneTimeEvent>()
+    val event = _events.receiveAsFlow()
 
-    //private var cachedBooks = emptyList<Book>()
+    fun onAction(action: ShoppingActions){
+        when(action){
+            is ShoppingActions.OnCheckKeyAction -> {
+                checkKey(action.key)
+            }
 
-    fun createKey() = viewModelScope.launch{
+            ShoppingActions.OnCreateKeyAction -> {
+                createKey()
+            }
+        }
+    }
+
+    private fun createKey() = viewModelScope.launch{
         _state.update {
             it.copy(
                 isLoading = true
@@ -43,12 +59,27 @@ class ShoppingViewModel(
                     errorMessage = error.toUiText()
                 )
             }
+            _events.send(OneTimeEvent.Error(DataError.Remote.UNKNOWN))
         }
     }
-    fun checkKey(key:String) = viewModelScope.launch{
+    private fun checkKey(key:String) = viewModelScope.launch{
        repository.checkKey(key).onSuccess {
-
-       }.onError {
+           _state.update {
+               it.copy(
+                   isLoading = false,
+                   errorMessage = null,
+                   key = key
+               )
+           }
+       }.onError { error ->
+           _state.update {
+               it.copy(
+                   items = emptyList(),
+                   isLoading = false,
+                   errorMessage = error.toUiText()
+               )
+           }
+           _events.send(OneTimeEvent.Error(DataError.Remote.WRONG_KEY))
        }
     }
 
@@ -82,6 +113,7 @@ class ShoppingViewModel(
                         errorMessage = error.toUiText()
                     )
                 }
+                _events.send(OneTimeEvent.Error(error))
             }
     }
 

@@ -23,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import org.shoplist.project.core.navigation.Route
 import org.shoplist.project.core.presentation.brown
 import org.shoplist.project.core.presentation.white
 import org.shoplist.project.shopList.presentation.component.EnterKeyDialog
@@ -30,10 +32,15 @@ import org.shoplist.project.shopList.presentation.component.EnterKeyDialog
 @Composable
 fun RegistryScreen(
     modifier: Modifier = Modifier,
+    navController: NavController,
+    state:ShoppingScreenState,
     onCreateKey: () -> Unit,
-    onCheckKey: () -> Unit
+    onCheckKey: (String) -> Unit
 ) {
     val showDialog =  remember { mutableStateOf(false) }
+    if(state.key != null){
+        navController.navigate(Route.MainPage)
+    }
     if(showDialog.value)
         EnterKeyDialog(
             value = "",
@@ -43,8 +50,8 @@ fun RegistryScreen(
             setValue = {
 
             },
-            onButtonClick = {
-                onCheckKey()
+            onButtonClick = { key:String ->
+                onCheckKey(key)
             }
         )
     Column(

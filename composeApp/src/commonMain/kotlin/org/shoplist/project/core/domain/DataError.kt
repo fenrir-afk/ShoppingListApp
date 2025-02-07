@@ -7,6 +7,7 @@ sealed interface DataError: Error {
         NO_INTERNET,
         SERVER,
         SERIALIZATION,
+        WRONG_KEY,
         UNKNOWN
     }
 
