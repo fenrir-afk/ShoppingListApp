@@ -2,7 +2,9 @@ package org.shoplist.project.shopList.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -95,7 +97,9 @@ class ShoppingViewModel(
     }
 
     fun getListsContent() = viewModelScope.launch {
-        if(state.value.itemLists.isNotEmpty()){
+        if(state.value.itemLists.isEmpty()){
+            delay(1000)
+        }
             state.value.itemLists.forEachIndexed { index, listsItem ->
                 repository
                     .getShoppingList(listsItem.id)
@@ -106,17 +110,11 @@ class ShoppingViewModel(
                         _events.send(OneTimeEvent.Error(error))
                     }
             }
+            delay(2000L)
             _state.update {
                 it.copy(
                     isLoading = false
                 )
             }
-        }else{
-            _state.update {
-                it.copy(
-                    isLoading = false
-                )
-            }
-        }
     }
 }

@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import org.shoplist.project.core.navigation.Route
 import org.shoplist.project.core.presentation.brown
 import org.shoplist.project.core.presentation.white
+import org.shoplist.project.shopList.presentation.component.CustomButton
 import org.shoplist.project.shopList.presentation.component.EnterKeyDialog
 
 @Composable
@@ -54,38 +55,18 @@ fun RegistryScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        OutlinedButton(
+        CustomButton(
             modifier = Modifier.fillMaxWidth(0.5f),
-            colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-            border = BorderStroke(2.dp, Color.Black),
-            shape = CircleShape,
-            onClick = {
-                onCreateKey()
-            }
-        ) {
-            Icon(Icons.Default.Add,"", tint = white)
-            Text(
-                color = white,
-                text = "Create new key",
-                fontSize = 14.sp
-            )
+            text = "Create new key"
+        ){
+            onCreateKey()
         }
         Spacer(modifier = Modifier.height(25.dp))
-        OutlinedButton(
+        CustomButton(
             modifier = Modifier.fillMaxWidth(0.5f),
-            colors = ButtonDefaults.outlinedButtonColors(backgroundColor = Color.Transparent),
-            border = BorderStroke(2.dp, Color.Black),
-            shape = CircleShape,
-            onClick = {
-                showDialog.value = true
-            }
-        ) {
-            Icon(Icons.Default.Add,"", tint = white)
-            Text(
-                color = white,
-                text = "Use existing key",
-                fontSize = 14.sp
-            )
+            text = "Use existing key"
+        ){
+            showDialog.value = true
         }
     }
 }
